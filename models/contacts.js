@@ -23,7 +23,12 @@ const removeContact = async (contactId) => {
   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 };
 
-const addContact = async (body) => {};
+const addContact = async (body) => {
+  const contacts = await listContacts();
+  await contacts.push(body);
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  return contacts;
+};
 
 const updateContact = async (contactId, body) => {};
 

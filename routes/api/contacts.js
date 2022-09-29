@@ -1,6 +1,18 @@
 const express = require("express");
 
 const router = express.Router();
+const Joi = require("joi");
+const shortid = require("shortid");
+
+const bookSchema = Joi.object({
+  name: Joi.string().alphanum().min(3).max(30).required(),
+  email: Joi.string()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+    .required(),
+  phone: Joi.string()
+    .pattern(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/)
+    .required(),
+});
 
 const contactsFunctions = require("../../models/contacts");
 
@@ -28,7 +40,24 @@ router.get("/:contactId", async (req, res, next) => {
 });
 
 router.post("/", async (req, res, next) => {
-  res.json({ message: "template message" });
+  try {
+    const value = await bookSchema.validate(req.body);
+
+    const newContact = {
+      id: shortid.generate(),
+      ...req.body,
+    };
+
+    if (!value) {
+      throw new Error({ message: "Invalid contact data" });
+    }
+    const result = await contactsFunctions.addContact(newContact);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 });
 
 router.delete("/:contactId", async (req, res, next) => {
