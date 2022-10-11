@@ -72,11 +72,11 @@ router.put("/:contactId", async (req, res, next) => {
   }
 });
 
-router.put("/:contactId", async (req, res, next) => {
+router.put("/:contactId/favorite", async (req, res, next) => {
   const { contactId } = req.params;
 
   try {
-    const result = await contactsFunctions.updateFavoriteContact(
+    const result = await contactsFunctions.updateStatusContact(
       contactId,
       req.body
     );
