@@ -2,7 +2,6 @@ const express = require("express");
 
 const router = express.Router();
 const Joi = require("joi");
-const shortid = require("shortid");
 
 const contactSchema = Joi.object({
   name: Joi.string().alphanum().min(3).max(30).required(),
@@ -14,7 +13,7 @@ const contactSchema = Joi.object({
     .required(),
 });
 
-const contactsFunctions = require("../../models/contacts");
+const contactsFunctions = require("../../controllers/contacts");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -43,10 +42,7 @@ router.post("/", async (req, res, next) => {
   try {
     const value = await contactSchema.validate(req.body);
 
-    const newContact = {
-      id: shortid.generate(),
-      ...req.body,
-    };
+    const newContact = req.body;
 
     if (!value) {
       throw new Error({ message: "Invalid contact data" });
