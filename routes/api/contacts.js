@@ -4,7 +4,7 @@ const router = express.Router();
 const Joi = require("joi");
 const shortid = require("shortid");
 
-const bookSchema = Joi.object({
+const contactSchema = Joi.object({
   name: Joi.string().alphanum().min(3).max(30).required(),
   email: Joi.string()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
@@ -41,7 +41,7 @@ router.get("/:contactId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const value = await bookSchema.validate(req.body);
+    const value = await contactSchema.validate(req.body);
 
     const newContact = {
       id: shortid.generate(),
