@@ -2,19 +2,9 @@ const express = require("express");
 
 const router = express.Router();
 const Joi = require("joi");
-const shortid = require("shortid");
+const { contactJoiSchema } = require("../../models/contact");
 
-const contactSchema = Joi.object({
-  name: Joi.string().alphanum().min(3).max(30).required(),
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .required(),
-  phone: Joi.string()
-    .pattern(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/)
-    .required(),
-});
-
-const contactsFunctions = require("../../models/contacts");
+const contactsFunctions = require("../../controllers/contacts");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -41,12 +31,9 @@ router.get("/:contactId", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const value = await contactSchema.validate(req.body);
+    const value = await contactJoiSchema.validate(req.body);
 
-    const newContact = {
-      id: shortid.generate(),
-      ...req.body,
-    };
+    const newContact = req.body;
 
     if (!value) {
       throw new Error({ message: "Invalid contact data" });
@@ -77,6 +64,22 @@ router.put("/:contactId", async (req, res, next) => {
 
   try {
     const result = await contactsFunctions.updateContact(contactId, req.body);
+    return result;
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+router.put("/:contactId/favorite", async (req, res, next) => {
+  const { contactId } = req.params;
+
+  try {
+    const result = await contactsFunctions.updateStatusContact(
+      contactId,
+      req.body
+    );
     return result;
   } catch (error) {
     res.status(500).json({
