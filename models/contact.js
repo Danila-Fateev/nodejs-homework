@@ -16,6 +16,10 @@ const contactSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  owner: {
+    type: SchemaTypes.ObjectId,
+    ref: "user",
+  },
 });
 
 const contactFavoriteSchema = new Schema({
@@ -33,6 +37,7 @@ const contactJoiSchema = Joi.object({
   phone: Joi.string()
     .pattern(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/)
     .required(),
+  favorite: Joi.boolean(),
 });
 
 const Contact = model("contact", contactSchema);
