@@ -45,9 +45,21 @@ router.post("/login", async (req, res, next) => {
 
 router.post("/logout", middlewares.authToken, async (req, res, next) => {
   try {
-    const result = await userFunctions.logout(req.user);
-    console.log(result);
+    await userFunctions.logout(req.user);
     res.json({ status: 200, message: "Logged out" });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+router.get("/current", middlewares.authToken, async (req, res, next) => {
+  try {
+    const result = await userFunctions.showCurrentUser(
+      req.headers.authorization
+    );
+    res.json(result);
   } catch (error) {
     res.status(500).json({
       message: error.message,
