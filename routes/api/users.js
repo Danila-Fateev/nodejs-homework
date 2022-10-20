@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const { userJoiSchema } = require("../../models/user");
 const userFunctions = require("../../controllers/users");
+const middlewares = require("../../middlewares");
 
 router.post("/signup", async (req, res, next) => {
   try {
@@ -23,7 +24,7 @@ router.post("/signup", async (req, res, next) => {
   }
 });
 
-router.get("/login", async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
   try {
     const value = await userJoiSchema.validate(req.body);
     const userData = req.body;
@@ -35,6 +36,18 @@ router.get("/login", async (req, res, next) => {
     }
     const result = await userFunctions.login(userData);
     res.json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
+router.post("/logout", middlewares.authToken, async (req, res, next) => {
+  try {
+    const result = await userFunctions.logout(req.user);
+    console.log(result);
+    res.json({ status: 200, message: "Logged out" });
   } catch (error) {
     res.status(500).json({
       message: error.message,

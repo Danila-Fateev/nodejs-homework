@@ -17,10 +17,12 @@ const login = async (body) => {
     id: foundUserByEmail._id,
     email: foundUserByEmail.email,
   };
-
+  const userEmail = foundUserByEmail.email;
+  const userSubscription = foundUserByEmail.subscription;
+  const user = { email: userEmail, subscription: userSubscription };
   const newToken = await jwt.sign(payload, SECRET_KEY, { expiresIn: "4h" });
   await foundUserByEmail.update({ token: newToken });
-  return newToken;
+  return { newToken, user };
 };
 
 module.exports = login;

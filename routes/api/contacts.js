@@ -5,6 +5,7 @@ const Joi = require("joi");
 const { contactJoiSchema } = require("../../models/contact");
 
 const contactsFunctions = require("../../controllers/contacts");
+const middlewares = require("../../middlewares");
 
 router.get("/", async (req, res, next) => {
   try {
@@ -17,7 +18,7 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:contactId", async (req, res, next) => {
+router.get("/:contactId", middlewares.authToken, async (req, res, next) => {
   const { contactId } = req.params;
   try {
     const result = await contactsFunctions.getContactById(contactId);
@@ -29,16 +30,16 @@ router.get("/:contactId", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", middlewares.authToken, async (req, res, next) => {
   try {
     const value = await contactJoiSchema.validate(req.body);
 
     const newContact = req.body;
-
+    const user = req.user;
     if (!value) {
       throw new Error({ message: "Invalid contact data" });
     }
-    const result = await contactsFunctions.addContact(newContact);
+    const result = await contactsFunctions.addContact(newContact, user);
     res.json(result);
   } catch (error) {
     res.status(500).json({
@@ -47,7 +48,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:contactId", async (req, res, next) => {
+router.delete("/:contactId", middlewares.authToken, async (req, res, next) => {
   const { contactId } = req.params;
   try {
     await contactsFunctions.removeContact(contactId);
@@ -59,7 +60,7 @@ router.delete("/:contactId", async (req, res, next) => {
   }
 });
 
-router.put("/:contactId", async (req, res, next) => {
+router.put("/:contactId", middlewares.authToken, async (req, res, next) => {
   const { contactId } = req.params;
 
   try {
@@ -72,20 +73,24 @@ router.put("/:contactId", async (req, res, next) => {
   }
 });
 
-router.put("/:contactId/favorite", async (req, res, next) => {
-  const { contactId } = req.params;
+router.put(
+  "/:contactId/favorite",
+  middlewares.authToken,
+  async (req, res, next) => {
+    const { contactId } = req.params;
 
-  try {
-    const result = await contactsFunctions.updateStatusContact(
-      contactId,
-      req.body
-    );
-    return result;
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
+    try {
+      const result = await contactsFunctions.updateStatusContact(
+        contactId,
+        req.body
+      );
+      return result;
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
   }
-});
+);
 
 module.exports = router;
