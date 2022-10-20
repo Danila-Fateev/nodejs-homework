@@ -18,7 +18,7 @@ const login = async (body) => {
     email: foundUserByEmail.email,
   };
 
-  const newToken = await jwt.sign(payload, SECRET_KEY);
+  const newToken = await jwt.sign(payload, SECRET_KEY, { expiresIn: "4h" });
   await foundUserByEmail.update({ token: newToken });
   return newToken;
 };
