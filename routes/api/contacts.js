@@ -9,8 +9,8 @@ const middlewares = require("../../middlewares");
 
 router.get("/", async (req, res, next) => {
   try {
-    const { page, limit } = req.query;
-    const result = await contactsFunctions.listContacts(page, limit);
+    const { page, limit, favorite } = req.query;
+    const result = await contactsFunctions.listContacts(page, limit, favorite);
     res.json(result);
   } catch (error) {
     res.status(500).json({
