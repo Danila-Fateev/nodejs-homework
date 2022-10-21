@@ -1,20 +1,26 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model, SchemaTypes } = require("mongoose");
 const Joi = require("joi");
 
 const contactSchema = new Schema({
   name: {
     type: String,
-    required: [true, "Set name for contact"],
+    required: true,
   },
   email: {
     type: String,
+    required: true,
   },
   phone: {
     type: String,
+    required: true,
   },
   favorite: {
     type: Boolean,
     default: false,
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
   },
 });
 
@@ -33,6 +39,7 @@ const contactJoiSchema = Joi.object({
   phone: Joi.string()
     .pattern(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/)
     .required(),
+  favorite: Joi.boolean(),
 });
 
 const Contact = model("contact", contactSchema);
