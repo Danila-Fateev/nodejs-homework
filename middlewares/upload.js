@@ -1,16 +1,11 @@
 const path = require("path");
 const multer = require("multer");
-const storeImage = path.join(process.cwd(), "tmp");
+const uploadDir = path.join(process.cwd(), "tmp");
 
 const multerConfig = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
+  destination: uploadDir,
   filename: (req, file, cb) => {
     cb(null, file.originalname);
-  },
-  limits: {
-    fileSize: 1048576,
   },
 });
 
