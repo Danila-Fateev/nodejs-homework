@@ -6,7 +6,6 @@ const storeImage = path.join(process.cwd(), "public", "avatars");
 
 const updateAvatar = async (req) => {
   const userFoundById = await User.findById(req.user._id);
-  console.log(userFoundById);
   const { path: temporaryName, originalname } = req.file;
   const extension = originalname.split(".").pop();
   const avatarName = `${userFoundById._id}.${extension}`;
