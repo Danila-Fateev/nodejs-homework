@@ -74,8 +74,7 @@ router.patch(
   async (req, res, next) => {
     try {
       const result = await userFunctions.updateAvatar(req);
-
-      res.json(result);
+      res.status(200).json(result);
     } catch (error) {
       res.status(500).json({
         message: error.message,
