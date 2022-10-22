@@ -16,6 +16,7 @@ const userSchema = new Schema({
     enum: ["starter", "pro", "business"],
     default: "starter",
   },
+  avatarURL: String,
   token: {
     type: String,
     default: null,
@@ -31,6 +32,7 @@ const userJoiSchema = Joi.object({
     .pattern(/^(\()?\d{3}(\))?(-|\s)?\d{3}(-|\s)\d{4}$/)
     .required(),
   subscription: Joi.string(),
+  avatarURL: Joi.string(),
   token: Joi.string(),
 });
 
