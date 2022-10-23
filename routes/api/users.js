@@ -67,4 +67,20 @@ router.get("/current", middlewares.authToken, async (req, res, next) => {
   }
 });
 
+router.patch(
+  "/avatars",
+  middlewares.authToken,
+  middlewares.upload.single("avatars"),
+  async (req, res, next) => {
+    try {
+      const result = await userFunctions.updateAvatar(req);
+      res.status(200).json(result);
+    } catch (error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+  }
+);
+
 module.exports = router;
