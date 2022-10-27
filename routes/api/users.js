@@ -95,4 +95,17 @@ router.get("/verify/:verificationToken", async (req, res, next) => {
   }
 });
 
+router.get("/verify/", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+
+    await userFunctions.sendVerificationMsg(email);
+    res.status(200).json("Veification email sent");
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+});
+
 module.exports = router;
