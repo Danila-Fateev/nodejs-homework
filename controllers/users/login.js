@@ -6,6 +6,9 @@ const { SECRET_KEY } = process.env;
 const login = async (body) => {
   const { email, password } = body;
   const [foundUserByEmail] = await User.find({ email });
+  if (!foundUserByEmail.verify) {
+    throw new Error("User is not verified");
+  }
   const correctPassword = await bcrypt.compare(
     password,
     foundUserByEmail.password
